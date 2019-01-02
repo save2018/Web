@@ -1,0 +1,41 @@
+<!--
+<link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/2.3.1/css/bootstrap.min.css">-->
+<link rel="stylesheet" href="http://www.bootcss.com/p/bootstrap-switch/static/stylesheets/bootstrapSwitch.css">
+<script src="http://cdn.bootcss.com/jquery/1.9.1/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+<script src="http://www.bootcss.com/p/bootstrap-switch/static/js/bootstrapSwitch.js"></script>
+
+
+<script>
+$(function(){
+
+	$('#switch').on('switch-change', function (e, data) {
+    var $el = $(data.el)
+      , value = data.value;
+	  console.log(value);
+    //console.log(e, $el, value);
+});
+});
+
+</script>
+
+<body>
+<div style="height:30px;">
+
+<div class="switch switch-large">
+    <input type="checkbox" checked />
+</div>
+
+<div class="switch" id="switch">
+    <input type="checkbox" checked />
+</div>
+
+<div class="switch switch-small">
+    <input type="checkbox" checked />
+</div>
+
+<div class="switch switch-mini">
+    <input type="checkbox" checked />
+</div>
+</div>
+</body>

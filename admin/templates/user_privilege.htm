@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>{$lang.home}{if $ur_here} - {$ur_here} {/if}</title>
+<meta name="Copyright" content="Douco Design." />
+<link href="templates/public.css" rel="stylesheet" type="text/css">
+{include file="javascript.htm"}
+<script type="text/javascript" src="images/jquery.autotextarea.js"></script>
+<script>
+{literal}
+
+{/literal}
+</script>
+</head>
+<body>
+<div id="dcWrap">
+ {include file="header.htm"}
+ <div id="dcLeft">{include file="menu.htm"}</div>
+ <div id="dcMain">
+   {include file="ur_here.htm"}
+   <div class="mainBox" style="{$workspace.height}">
+
+    <h3><a href="{$action_link.href}" class="actionBtn">{$action_link.text}</a>{$ur_here}</h3>
+    <form action="user.php?rec={$form_action}" method="post" enctype="multipart/form-data">
+     <div class="formBasic">
+      <dl>
+       <dt >ID</dt>
+       <dd>
+        <input type="text" name="user_id"  readonly="readonly"  value="{$user.user_id}" size="50" class="inpMain" />
+       </dd>
+      </dl>
+      
+       <dl>
+       <dt>名称</dt>
+       <dd>
+         <input type="text" name="username"  readonly="readonly"   value="{$user.username}" size="50" class="inpMain" />
+       </dd>
+      </dl>
+      
+       <dl>
+       <dt>级别</dt>
+       <dd>
+         {$user.level_code} &nbsp; 
+         {if $user.level_code eq 'J'}常务{/if}{if $user.level_code eq 'L'}理事{/if}
+         {if $user.level_code eq 'D'}省代{/if}{if $user.level_code eq 'B'}市代{/if}
+       </dd>
+      </dl>
+      
+      <dl>
+       <dt>查看店铺</dt>
+       <dd>
+	   <input type="radio" name="is_down" value="1" {if $user.is_down eq '1'} checked="checked"{/if}>是 &nbsp;&nbsp;
+	   <input type="radio" name="is_down" value="0" {if $user.is_down eq '0'} checked="checked"{/if}>否
+	    </dd>
+      </dl>
+      
+      
+
+      <dl>
+       <input type="hidden" name="token" value="{$token}" />
+       <input type="hidden" name="id" value="{$user.id}">
+       <input name="submit" class="btn" type="submit" value="{$lang.btn_submit}" />
+      </dl>
+     </div>
+    </form>
+
+   </div>
+ </div>
+ {include file="footer.htm"}
+ </div>
+
+
+
+
+</body>
+</html>

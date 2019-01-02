@@ -1,0 +1,300 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>{$lang.home}{if $ur_here} - {$ur_here} {/if}</title>
+<meta name="Copyright" content="Douco Design." />
+<link href="templates/public.css" rel="stylesheet" type="text/css">
+{include file="javascript.htm"}
+<script type="text/javascript" src="images/jquery.autotextarea.js"></script>
+<script>
+{literal}
+$(function(){
+
+	$("#level").change(function(){
+		
+		var cid=$(this).val();
+	
+		$.ajax({
+			 
+			type: "get",  //
+			 url : "zuzhi.php", 
+			 dataType:'json',// 
+			 data:  'rec=get_parent&cid='+cid,   
+			 success: function(res){
+				 
+				if(res){
+					 var option='<option value="0">请选择</option>';
+					 
+					 for(var i=0;i<res.length;i++){
+						 
+						 
+						 option+='<option value="'+res[i].zid+'">'+res[i].code+'-'+res[i].zname+'</option>';
+					 }
+					
+					
+					$("#level_parent").html(option);
+					
+				}
+			 }
+		});
+		
+		/////////////
+		
+	});
+	
+	
+});
+
+{/literal}
+</script>
+</head>
+<body>
+<div id="dcWrap">
+ {include file="header.htm"}
+ <div id="dcLeft">{include file="menu.htm"}</div>
+ <div id="dcMain">
+   {include file="ur_here.htm"}
+   <div class="mainBox" style="{$workspace.height}">
+    <!-- {if $rec eq 'default'} 列表 -->
+    <h3><a href="{$action_link.href}" class="actionBtn add">{$action_link.text}</a>
+        <a href="zzs.php" class="actionBtn" style="margin-right: 20px;">批量查组织</a>
+    {$ur_here}</h3>
+    <div class="filter" style="display:none">
+    <form action="zuzhi.php" method="post">
+     <select name="cat_id" style="display:none;">
+      <option value="0">{$lang.uncategorized}</option>
+      <!-- {foreach from=$zuzhi_category item=cate} -->
+      <!-- {if $cate.cat_id eq $cat_id} -->
+      <option value="{$cate.cat_id}" selected="selected">{$cate.mark} {$cate.cat_name}</option>
+      <!-- {else} -->
+      <option value="{$cate.cat_id}">{$cate.mark} {$cate.cat_name}</option>
+      <!-- {/if} -->
+      <!-- {/foreach} -->
+     </select>
+     <input name="keyword" type="text" class="inpMain" value="{$keyword}" size="20" />
+     <input name="submit" class="btnGray" type="submit" value="{$lang.btn_filter}" />
+    </form>
+    <span style="display:none">
+    <!-- {if $sort.handle} -->
+    <a class="btnGray" href="zuzhi.php?rec=sort&act=handle">{$lang.sort_close}</a>
+    <!-- {else} -->
+    <a class="btnGray" href="zuzhi.php?rec=sort&act=handle">{$lang.sort_zuzhi}</a>
+    <!-- {/if} -->
+    </span>
+    </div>
+    <!-- {if $sort.handle} -->
+    <div class="homeSortRight">
+     <ul class="homeSortBg">
+      {$sort.bg}
+     </ul>
+     <ul class="homeSortList">
+      <!-- {foreach from=$sort.list item=zuzhi} -->
+      <li>
+       <em>{$zuzhi.o_name}</em>
+       <a href="zuzhi.php?rec=sort&act=cancel&id={$zuzhi.id}" title="{$lang.sort_cancel}">X</a>
+      </li>
+      <!-- {/foreach} -->
+     </ul>
+    </div>
+    <!-- {/if} -->
+    <div id="list"{if $sort.handle} class="homeSortLeft"{/if} >
+    
+    
+    
+    {include file="zu.html"}
+    
+    
+    <form name="action" method="post" action="zuzhi.php?rec=action" style="    display: none;">
+    <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tableBasic" style="display:none;">
+     <tr>
+      <th width="22" align="center"><input name='chkall' type='checkbox' id='chkall' onclick='selectcheckbox(this.form)' value='check'></th>
+      <th width="40" align="center">{$lang.record_id}</th>
+      <th align="left">{$lang.zuzhi_name}</th>
+       <!--<th width="150" align="center">{$lang.zuzhi_category}</th>
+     <th width="80" align="center">{$lang.add_time}</th>-->
+     <th width="80" align="center">{$lang.zuzhi_level}</th>
+      <th width="80" align="center">{$lang.handler}</th>
+     </tr>
+     <!-- {foreach from=$zuzhi_list item=zuzhi} -->
+     <tr>
+      <td align="center"><input type="checkbox" name="checkbox[]" value="{$zuzhi.zid}" /></td>
+      <td align="center">{$zuzhi.zid}</td>
+      <td><a href="zuzhi.php?rec=edit&id={$zuzhi.zid}">{$zuzhi.zname}</a><!-- {if $zuzhi.image} --> <a href="../{$zuzhi.image}" target="_blank"><img src="images/icon_picture.png" width="16" height="16" align="absMiddle"></a><!-- {/if} --></td>
+    <!--  <td align="center">{$zuzhi.add_time}</td> -->
+    <td align="center">{$zuzhi.cid} </td>
+      <td align="center">
+       <!-- {if $sort.handle} -->
+       <a href="zuzhi.php?rec=sort&act=set&id={$zuzhi.id}">{$lang.sort_btn}</a>
+       <!-- {else} -->
+       <a href="zuzhi.php?rec=edit&id={$zuzhi.zid}">{$lang.edit}</a> | <a href="zuzhi.php?rec=del&id={$zuzhi.zid}">{$lang.del}</a>
+       <!-- {/if} -->
+      </td>
+     </tr>
+     <!-- {/foreach} -->
+    </table>
+    <div class="action">
+     <select name="action" onchange="douAction()">
+      <option value="0">{$lang.select}</option>
+      <option value="del_all">{$lang.del}</option>
+      <option value="category_move">{$lang.category_move}</option>
+     </select>
+     <select name="new_cat_id" style="display:none">
+      <option value="0">{$lang.uncategorized}</option>
+      <!-- {foreach from=$zuzhi_category item=cate} -->
+      <!-- {if $cate.cat_id eq $cat_id} -->
+      <option value="{$cate.cat_id}" selected="selected">{$cate.mark} {$cate.cat_name}</option>
+      <!-- {else} -->
+      <option value="{$cate.cat_id}">{$cate.mark} {$cate.cat_name}</option>
+      <!-- {/if} -->
+      <!-- {/foreach} -->
+     </select>
+     <input name="submit" class="btn" type="submit" value="{$lang.btn_execute}" />
+    </div>
+    </form>
+    </div>
+    <div class="clear"></div>
+  {include file="pager.htm"}
+    <!-- {/if} -->
+    <!-- {if $rec eq 'add' || $rec eq 'edit'} 文章添加或编辑 -->
+    <h3><a href="{$action_link.href}" class="actionBtn">{$action_link.text}</a>{$ur_here}</h3>
+    <form action="zuzhi.php?rec={$form_action}" method="post" enctype="multipart/form-data">
+     <div class="formBasic">
+      <dl>
+       <dt>{$lang.zuzhi_name}</dt>
+       <dd>
+        <input type="text" name="name" value="{$zuzhi.zname}" size="50" class="inpMain" />
+       </dd>
+      </dl>
+            <dl>
+       <dt>编号</dt>
+       <dd>
+        <input type="text" name="code" value="{$zuzhi.code}" size="50" class="inpMain" />
+       </dd>
+      </dl>
+      
+      
+      <dl>
+       <dt>当前级别</dt>
+       <dd>
+        <select name="cat_id" style="display:none">
+         <option value="0">{$lang.uncategorized}</option>
+         <!-- {foreach from=$zuzhi_category item=cate} -->
+         <!-- {if $cate.cat_id eq $zuzhi.cat_id} -->
+         <option value="{$cate.cat_id}" selected="selected">{$cate.mark} {$cate.cat_name}</option>
+         <!-- {else} -->
+         <option value="{$cate.cat_id}">{$cate.mark} {$cate.cat_name}</option>
+         <!-- {/if} -->
+         <!-- {/foreach} -->
+        </select>
+        
+        <select name="cid" id="level">
+        <option value="1" {if $zuzhi.cid eq 1} selected="selected" {/if}>等级1</option>
+        <option value="2" {if $zuzhi.cid eq 2} selected="selected" {/if}>等级2</option>
+        <option value="3" {if $zuzhi.cid eq 3} selected="selected" {/if}>等级3</option>
+        <option value="4" {if $zuzhi.cid eq 4} selected="selected" {/if}>等级4</option>
+        <option value="5" {if $zuzhi.cid eq 5} selected="selected" {/if}>等级5</option>
+        </select>
+       </dd>
+      </dl>
+      
+       <dl>
+       <dt>上级分类</dt>
+       <dd>
+        <select name="parent_id" id="level_parent" >
+        
+        <option value="0">请选择</option>
+        {if $zuzhi.parent}
+		{foreach from=$zuzhi.parent item=parent}
+		<option value="{$parent.zid}" {if $parent.zid eq $zuzhi.parent_id} selected="selected" {/if}>{$parent.code}-{$parent.zname}</option>
+		{/foreach}
+   	    {/if}
+        </select>
+       </dd>
+      </dl>
+      
+      
+      <!-- {if $zuzhi.defined} -->
+      <dl>
+       <dt valign="top">{$lang.zuzhi_defined}</dt>
+       <dd>
+        <textarea name="defined" id="defined" cols="50" class="textAreaAuto" style="height:{$zuzhi.defined_count}0px">{$zuzhi.defined}</textarea>
+        <script type="text/javascript">
+         {literal}
+          $("#defined").autoTextarea({maxHeight:300});
+         {/literal}
+        </script>
+        </dd>
+      </dl>
+      <!-- {/if} -->
+      <dl style="display:none">
+       <dt valign="top">{$lang.zuzhi_content}</dt>
+       <dd >
+       
+        <script charset="utf-8" src="include/kindeditor/kindeditor.js"></script>
+        <script charset="utf-8" src="include/kindeditor/lang/zh_CN.js"></script>
+        <script>
+        {literal}
+         var editor;
+         KindEditor.ready(function(K) {
+             editor = K.create('#content');
+         });
+        {/literal}
+        </script>
+        <!-- /KindEditor -->
+        <textarea id="content" name="content" style="width:98%;height:500px;" class="textArea">{$zuzhi.content}</textarea>
+       </dd>
+      </dl>
+      <!-- 
+      <dl>
+       <dt>{$lang.thumb}</dt>
+       <dd>
+        <input type="file" name="image" size="38" class="inpFlie" />
+        {if $zuzhi.image}<a href="../{$zuzhi.image}" target="_blank"><img src="images/icon_yes.png"></a>{else}<img src="images/icon_no.png">{/if}</dt>
+      </dl>
+      <dl>
+       <dt>{$lang.keywords}</dt>
+       <dd>
+        <input type="text" name="keywords" value="{$zuzhi.keywords}" size="135" class="inpMain" />
+       </dd>
+      </dl>
+      <dl>
+       <dt>{$lang.description}</dt>
+       <dd>
+        <textarea name="description" cols="115" rows="3" class="textArea" />{$zuzhi.description}</textarea>
+       </dd>
+      </dl>
+      -->
+      <dl>
+       <input type="hidden" name="token" value="{$token}" />
+       <input type="hidden" name="image" value="{$zuzhi.image}">
+       <input type="hidden" name="id" value="{$zuzhi.zid}">
+       <input name="submit" class="btn" type="submit" value="{$lang.btn_submit}" />
+      </dl>
+     </div>
+    </form>
+    <!-- {/if} -->
+   </div>
+ </div>
+ {include file="footer.htm"}
+ </div>
+<!-- {if $rec eq 'default'} 文章列表 -->
+<script type="text/javascript">
+{literal}
+onload = function()
+{
+  document.forms['action'].reset();
+}
+
+function douAction()
+{
+    var frm = document.forms['action'];
+
+    frm.elements['new_cat_id'].style.display = frm.elements['action'].value == 'category_move' ? '' : 'none';
+}
+
+{/literal}
+</script>
+<!-- {/if} -->
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>首页</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="Text/Javascript" language="JavaScript">
+<!--
+{literal}
+if (window.top != window)
+{
+  window.top.location.href = document.location.href;
+}
+{/literal}
+//-->
+</script>
+<!--  <base href="http://192.168.1.108/Mapbackstage/"></base> -->
+<script  type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ycTgY5YTSnk5PsqumqZboxtXaKU6Io6K"></script>
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="theme/default/js/distpicker.data.js"></script>
+<script src="theme/default/js/distpicker.js"></script>
+<script src="theme/default/js/main.js"></script>
+<link href="theme/{$theme_name}/style/main.css" rel="stylesheet" type="text/css" />
+<link href="theme/{$theme_name}/style/bootstrap.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn.bootcss.com/html2canvas/0.4.1/html2canvas.js"></script> 
+
+<style type="text/css">
+{literal}
+    .gf_s {
+      float: left;
+      width: 4px;
+      cursor: e-resize;
+      background-color: #ccc;
+      border: #c5c5c5 1px solid;
+    }
+ 
+    .gf_s_g {
+      float: left;
+      width: 4px;
+      display: none;
+      cursor: e-resize;
+      position: absolute;
+      background-color: #ccc;
+      border: #c5c5c5 1px solid;
+      filter: alpha(opacity=60);
+      -moz-opacity: 0.6;
+      -khtml-opacity: 0.6;
+      opacity: 0.6;
+      z-index: 1000;
+    }
+    .logodiv{    height: 35px;
+    width: 200px;
+    float: left;
+    margin-top: -5px;}
+    {/literal}
+
+  </style>
+</head>
+<body>
+
+
+<div class="main" id="main" style="width:100%;height:1000px;">
+	<!-- 上部 -->
+	<div class="top" id="top" style="width:100%;height:60px;">
+	
+
+	  {include file='top.htm'}	
+	
+	</div>
+	<!-- left -->
+	<div class="left" id="left" style="float:left; width:16%;">
+	  			
+
+	{include file='left.htm'}			
+	  			
+	  			
+	</div>
+	 <div id="divS" class="gf_s" style="float: left;"></div>
+     <div id="divSG" class="gf_s_g" style="float: left;"></div>
+	<script>
+	{literal}
+	$(function(){
+		
+
+		
+	});
+	{/literal}
+	</script>
+	<!-- main right -->
+	<div class="right" id="right" style="float:left; width:83%;">
+	
+		<div id="l-map" style="width:100%;" ></div> 
+		
+		<!-- <div id="load-map">
+		<iframe src="http://map.baidu.com/?l=&s=s%26wd%3D%E5%85%A8%E5%9B%BD"  style="width:100%;height:100%;border:0;"></iframe>
+		</div>
+		-->
+	</div>
+
+</div>
+
+	<div style="display:none"> 
+	<form id="formid"  name= "myform" method = 'post'  action = 'index.php?act=jietu'  >  
+	  <input name="img" type="hidden" id="imgs">  
+      <a href="javascript:;" onclick='$("#formid").submit()' rel="external nofollow" class="btn" style="width:150px;" id="toserver">保存图片到服务器</a>	 
+	</form> 
+
+	  
+    </div>
+    
+
+</body>
+</html>
+<script type="text/javascript">
+{literal}
+	// 百度地图API功能
+	function G(id) {
+		return document.getElementById(id);
+	}
+
+	var map = new BMap.Map("l-map");
+	map.centerAndZoom("西安",5);                   // 初始化地图,设置城市和地图级别。
+	
+	// 定位当前位置
+	/*
+	var map = new BMap.Map("l-map");
+	var point = new BMap.Point(116.331398,39.897445);
+	map.centerAndZoom(point,16);
+	
+
+	var geolocation = new BMap.Geolocation();
+	geolocation.getCurrentPosition
+	(function(r){
+		if(this.getStatus() == BMAP_STATUS_SUCCESS){
+			var mk = new BMap.Marker(r.point);
+			map.addOverlay(mk);
+			map.panTo(r.point);
+			//alert('您的位置：'+r.point.lng+','+r.point.lat);
+		}
+		else {
+			alert('failed'+this.getStatus());
+		}        
+	},{enableHighAccuracy: true})
+	*/
+	//关于状态码
+	//BMAP_STATUS_SUCCESS	检索成功。对应数值“0”。
+	//BMAP_STATUS_CITY_LIST	城市列表。对应数值“1”。
+	//BMAP_STATUS_UNKNOWN_LOCATION	位置结果未知。对应数值“2”。
+	//BMAP_STATUS_UNKNOWN_ROUTE	导航结果未知。对应数值“3”。
+	//BMAP_STATUS_INVALID_KEY	非法密钥。对应数值“4”。
+	//BMAP_STATUS_INVALID_REQUEST	非法请求。对应数值“5”。
+	//BMAP_STATUS_PERMISSION_DENIED	没有权限。对应数值“6”。(自 1.1 新增)
+	//BMAP_STATUS_SERVICE_UNAVAILABLE	服务不可用。对应数值“7”。(自 1.1 新增)
+	//BMAP_STATUS_TIMEOUT	超时。对应数值“8”。(自 1.1 新增)
+	
+	
+
+	var ac = new BMap.Autocomplete(    //建立一个自动完成的对象
+		{"input" : "suggestId"
+		,"location" : map
+	});
+
+	ac.addEventListener("onhighlight", function(e) {  //鼠标放在下拉列表上的事件
+	var str = "";
+		var _value = e.fromitem.value;
+		var value = "";
+		if (e.fromitem.index > -1) {
+			value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+		}    
+		str = "FromItem<br />index = " + e.fromitem.index + "<br />value = " + value;
+		
+		value = "";
+		if (e.toitem.index > -1) {
+			_value = e.toitem.value;
+			value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+		}    
+		str += "<br />ToItem<br />index = " + e.toitem.index + "<br />value = " + value;
+		G("searchResultPanel").innerHTML = str;
+	});
+
+	var myValue;
+	ac.addEventListener("onconfirm", function(e) {    //鼠标点击下拉列表后的事件
+	var _value = e.item.value;
+		myValue = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+		G("searchResultPanel").innerHTML ="onconfirm<br />index = " + e.item.index + "<br />myValue = " + myValue;
+		
+		setPlace();
+	});
+	
+	//单击获取点击的经纬度
+	map.addEventListener("click",function(e){
+		//alert(e.point.lng + "," + e.point.lat);  获取坐标
+		var mPoint = new BMap.Point(e.point.lng,e.point.lat);
+
+		//displayPOI(mPoint);
+		
+		map.enableScrollWheelZoom();
+		map.centerAndZoom(mPoint,14);
+		var circle = new BMap.Circle(mPoint,1000,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3,enableEditing:true});//1000 带标1000米 半径为1公里
+		map.addOverlay(circle);
+		
+		var circle2 = new BMap.Circle(mPoint,2000,{strokeColor:"green", strokeWeight:2, strokeOpacity:0.7,fillColor:"#0000ff",fillOpacity:0.1});     //半径为2公里
+		
+		map.addOverlay(circle2);   
+		
+		
+		var circle3 = new BMap.Circle(mPoint,3000,{strokeColor:"Olive", strokeWeight:2, strokeOpacity:0.7,fillColor:"#008000",fillOpacity:0.1});     //半径为3公里
+		
+		map.addOverlay(circle3); 
+
+		var circle4 = new BMap.Circle(mPoint,4000,{strokeColor:"Red", strokeWeight:2, strokeOpacity:0.7,fillColor:"#808000",fillOpacity:0.1});     //半径为4公里
+		
+		map.addOverlay(circle4);  
+
+		var circle5 = new BMap.Circle(mPoint,5000,{strokeColor:"Black", strokeWeight:2, strokeOpacity:0.7,fillColor:"#FF0000",fillOpacity:0.1});     //半径为5公里
+		
+		map.addOverlay(circle5);  		
+		
+		
+		if (mPoint != null) {
+		circle.addEventListener("lineupdate", function (e) {
+		console.log(circle.getRadius()); //返回圆形覆盖物的半径 
+		});
+		}
+		var local = new BMap.LocalSearch(map, {renderOptions: {map: map, autoViewport: false}}); 
+		local.searchNearby('餐馆',mPoint,1000);
+		
+		
+	});
+	
+	 //以点击为中心点画圆
+		/*
+		var mOption = {
+			poiRadius : 500,           //半径为1000米内的POI,默认100米
+			numPois : 2                //列举出50个POI,默认10个
+		}
+		
+		var myGeo = new BMap.Geocoder();        //创建地址解析实例
+		function displayPOI(mPoint){
+			map.addOverlay(new BMap.Circle(mPoint,500));        //添加一个圆形覆盖物
+			myGeo.getLocation(mPoint,
+				function mCallback(rs){
+					var allPois = rs.surroundingPois;       //获取全部POI（该点半径为100米内有6个POI点）
+					for(i=0;i<allPois.length;++i){
+						document.getElementById("panel").innerHTML += "<p style='font-size:12px;'>" + (i+1) + "、" + allPois[i].title + ",地址:" + allPois[i].address + "</p>";
+						map.addOverlay(new BMap.Marker(allPois[i].point));                
+					}
+				},mOption
+			);
+		}
+		*/
+	
+	
+	
+	
+	  //回车事件响应
+	$(function(){
+	
+	$(document).keyup(function (e) {//捕获文档对象的按键弹起事件  
+    if (e.keyCode == 13) {//按键信息对象以参数的形式传递进来了  
+        //此处编写用户敲回车后的代码 
+			 var note=$("#suggestId").val();
+			 //myValue=note;
+			 //setPlace();
+			 //alert(myValue);
+			  map.clearOverlays();    //清除地图上所有覆盖物  
+			 var local = new BMap.LocalSearch(map, {//智能搜索
+				renderOptions:{map: map}  
+				});
+				local.search(note);
+		}  
+		});  
+
+
+	
+	}); 
+	function setPlace(){
+		map.clearOverlays();    //清除地图上所有覆盖物
+		function myFun(){
+			var pp = local.getResults().getPoi(0).point;    //获取第一个智能搜索的结果
+			map.centerAndZoom(pp, 18);
+			map.addOverlay(new BMap.Marker(pp));    //添加标注
+		}
+		var local = new BMap.LocalSearch(map, { //智能搜索
+		  onSearchComplete: myFun
+		});
+		local.search(myValue);
+	}
+	
+	map.enableScrollWheelZoom(true); //放大和缩小
+	
+  ///保存图片功能
+
+$(function(){ 
+  $("#jietu_upload").click(function(){ 
+    html2canvas($("#right"), { 
+      onrendered: function(canvas) { 
+        //把截取到的图片替换到a标签的路径下载 
+       // $("#download").attr('href',canvas.toDataURL()); 
+		//内容放到form表单里面
+		
+		$("#imgs").val(canvas.toDataURL());
+		
+		$("#formid").submit();
+        //下载下来的图片名字 
+        //$("#download").attr('download','share.png') ;  
+       // document.body.appendChild(canvas); 
+      } 
+
+    }); 
+  }); 
+});   
+	
+	
+{/literal}
+</script>
+
+
+   <script type="text/javascript">
+   {literal}  
+   var $sliderMoving = false;     
+ 
+     //兼容各种浏览器的,获取鼠标真实位置
+     function mousePosition(ev) {
+       if (!ev) ev = window.event;
+       if (ev.pageX || ev.pageY) {
+         return { x: ev.pageX, y: ev.pageY };
+       }
+       return {
+         x: ev.clientX + document.documentElement.scrollLeft - document.body.clientLeft,
+         y: ev.clientY + document.documentElement.scrollTop - document.body.clientTop
+       };
+     };
+     //获取一个DIV的绝对坐标的功能函数,即使是非绝对定位,一样能获取到
+     function getElCoordinate(dom) {
+       var t = dom.offsetTop;
+       var l = dom.offsetLeft;
+       dom = dom.offsetParent;
+       while (dom) {
+         t += dom.offsetTop;
+         l += dom.offsetLeft;
+         dom = dom.offsetParent;
+       };
+       return { top: t, left: l };
+     };
+ 
+     //分隔条幽灵左右拖动(mousemove)
+     function sliderGhostMoving(e) {
+       $("#divSG").css({ left: mousePosition(e).x - 2, display: "block" });
+     };
+     //完成分隔条左右拖动(mouseup)
+     function sliderHorizontalMove(e) {
+       var lWidth = getElCoordinate($("#divSG")[0]).left - 2;
+       
+        //锁定左边最小宽度 230
+        if(lWidth<230){
+        	
+        	lWidth=230;
+        }
+       var rWidth = $(window).width() - lWidth - 6;
+       $("#left").css("width", lWidth + "px");
+       $("#right").css("width", rWidth + "px");
+       $("#divSG").css("display", "none");
+     };
+ 
+     function reinitSize() {
+       var width = $(window).width() - 6;
+       var height = $(window).height();   //浏览器高度
+       
+      var th=$("#top").height();  //头部高度
+         //左侧菜单固定高度
+         $(".main-div").css("height",height-th-60+'px');
+       $("#left").css({ height: height-th + "px", width: width * 0.16 + "px" });
+       $("#divS").css({ height: height-th - 2 + "px", width: "4px" });
+       $("#divSG").css({ height: height-th - 2 + "px", width: "4px" });
+       $("#right").css({ height: height-th + "px", width: width * 0.84 + "px" });
+     }
+ 
+     $(document).ready(function () {
+       reinitSize();
+ 
+       $("#divS").on("mousedown", function (e) {
+         $sliderMoving = true;
+         $("#main").css("cursor", "e-resize");
+       });
+ 
+       $("#main").on("mousemove", function (e) {
+         if ($sliderMoving) {
+           sliderGhostMoving(e);
+         }
+       });
+ 
+       $("#main").on("mouseup", function (e) {
+         if ($sliderMoving) {
+           $sliderMoving = false;
+           sliderHorizontalMove(e);
+           $("#main").css("cursor", "default");
+         }
+       });
+     });
+ 
+     $(window).resize(function () {
+       reinitSize();
+     });
+     
+
+     {/literal}
+   </script>
+
+
+
